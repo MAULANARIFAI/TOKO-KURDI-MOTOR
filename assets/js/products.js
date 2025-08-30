@@ -92,6 +92,57 @@
     }));
   }
 
+  // Auto-detect vehicle tags from product text
+  const VEHICLE_KEYWORDS = [
+    { label:'Avanza', re: /(\bavanza\b)/i },
+    { label:'Xenia', re: /(\bxenia\b)/i },
+    { label:'Rush', re: /(\brush\b)/i },
+    { label:'Terios', re: /(\bterios\b)/i },
+    { label:'Innova', re: /(\binnova\b|\bkijang\s*innova\b)/i },
+    { label:'Fortuner', re: /(\bfortuner\b)/i },
+    { label:'Calya', re: /(\bcalya\b)/i },
+    { label:'Sigra', re: /(\bsigra\b)/i },
+    { label:'Agya', re: /(\bagya\b)/i },
+    { label:'Ayla', re: /(\bayla\b)/i },
+    { label:'Brio', re: /(\bbrio\b)/i },
+    { label:'Jazz', re: /(\bjazz\b)/i },
+    { label:'Civic', re: /(\bcivic\b)/i },
+    { label:'CR-V', re: /(\bcr[- ]?v\b)/i },
+    { label:'HR-V', re: /(\bhr[- ]?v\b)/i },
+    { label:'Mobilio', re: /(\bmobilio\b)/i },
+    { label:'Ertiga', re: /(\bertiga\b)/i },
+    { label:'Carry', re: /(\bcarry\b)/i },
+    { label:'Gran Max', re: /(\bgran?d?\s*max\b|\bgran?max\b)/i },
+    { label:'Luxio', re: /(\bluxio\b)/i },
+    { label:'Pajero', re: /(\bpajero\b)/i },
+    { label:'Triton', re: /(\btriton\b)/i },
+    { label:'Hino', re: /(\bhino\b)/i },
+    { label:'Dutro', re: /(\bdutro\b)/i },
+    { label:'Fuso', re: /(\bfuso\b|\bps\s?\d{2,3}\b|\bcanter\b)/i },
+    { label:'Isuzu ELF', re: /(\belf\b|\bisuzu\s*n[pr]\w*\b)/i },
+    { label:'Colt Diesel', re: /(\bcolt\s*diesel\b|\bcd\s?\d+\b)/i },
+  ];
+
+  function detectVehiclesFromText(text){
+    if (!text) return [];
+    const out = [];
+    for (const {label, re} of VEHICLE_KEYWORDS) {
+      if (re.test(text)) out.push(label);
+    }
+    return Array.from(new Set(out));
+  }
+
+  function autoTagVehicles(){
+    PRODUCTS.forEach(p => {
+      if (!p) return;
+      if (!Array.isArray(p.vehicles) || p.vehicles.length === 0) {
+        const text = `${p.name?.id||''} ${p.name?.en||''} ${p.brand||''} ${p.sku||''}`;
+        const tags = detectVehiclesFromText(text);
+        if (tags.length) p.vehicles = tags;
+      }
+    });
+  }
+
   function buildCard(p, lang, t){
     const div = document.createElement('div');
     div.className = 'card product-card';
@@ -127,7 +178,7 @@
     if (title) title.textContent = t.listTitle;
     if (search && search.placeholder !== t.search) search.placeholder = t.search;
     // Ensure CSV loaded before first render (static file only)
-    if (!render._loaded) { await tryLoadCSV(); render._loaded = true; buildFilters(); }
+    if (!render._loaded) { await tryLoadCSV(); autoTagVehicles(); render._loaded = true; buildFilters(); }
     const q = (search && search.value || '').toLowerCase();
     const brandVal = (brandSel && brandSel.value || '').toLowerCase();
     const badgeVal = (badgeSel && badgeSel.value || '').toLowerCase();
