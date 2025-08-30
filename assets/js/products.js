@@ -77,6 +77,7 @@
 
   function toNum(v){ const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n) ? undefined : n; }
   function slug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+  function truthy(v){ return /^(ya|yes|true|1)$/i.test(String(v||'').trim()); }
 
   function objectsToProducts(objs){
     return objs.map(o => ({
@@ -89,6 +90,8 @@
       img: o.img || '',
       badge: (String(o.badge||'').toLowerCase() === 'original') ? 'original' : 'aftermarket',
       vehicles: (o.vehicles || o.vehicle || o.compat_tags || '').split(/[,;|]/).map(s => s.trim()).filter(Boolean),
+      group: o.group || o.nm_grup || '',
+      hasPhoto: truthy(o.has_photo || o.foto) || Boolean((o.img||'').trim()),
     }));
   }
 
@@ -148,7 +151,7 @@
     div.className = 'card product-card';
     const name = p.name?.[lang] || p.name?.id || '';
     const compat = p.compat?.[lang] || p.compat?.id || '';
-    const imgSrc = p.img || `https://picsum.photos/seed/${encodeURIComponent(p.id||name)}/640/420`;
+    const imgSrc = p.img || `https://placehold.co/640x420/0f151d/e6e8eb?text=${encodeURIComponent(p.group||'Produk')}`;
     const badge = t.badge[(p.badge==='original')?'original':'aftermarket'];
     div.innerHTML = `
       <img class="thumb" src="${imgSrc}" alt="${name}" loading="lazy" />
@@ -182,6 +185,8 @@
     const q = (search && search.value || '').toLowerCase();
     const brandVal = (brandSel && brandSel.value || '').toLowerCase();
     const badgeVal = (badgeSel && badgeSel.value || '').toLowerCase();
+    const photoSel = document.getElementById('prodPhoto');
+    const photoVal = (photoSel && photoSel.value || '').toLowerCase();
     const items = PRODUCTS.filter(p => {
       const name = (p.name?.[lang] || p.name?.id || '').toLowerCase();
       const sku = (p.sku||'').toLowerCase();
@@ -192,7 +197,9 @@
       const vehVal = (vehicleSel && vehicleSel.value || '').toLowerCase();
       const vehs = (p.vehicles||[]).map(v => v.toLowerCase());
       const matchesVehicle = !vehVal || vehs.includes(vehVal);
-      return matchesQ && matchesBrand && matchesBadge && matchesVehicle;
+      const hasPhoto = !!p.hasPhoto;
+      const matchesPhoto = !photoVal || (photoVal==='with' ? hasPhoto : !hasPhoto);
+      return matchesQ && matchesBrand && matchesBadge && matchesVehicle && matchesPhoto;
     });
     const pager = document.getElementById('prodPager');
     const pageInfo = document.getElementById('pageInfo');
@@ -224,6 +231,8 @@
     if (badgeSel) badgeSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
     const vehicleSel = document.getElementById('prodVehicle');
     if (vehicleSel) vehicleSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
+    const photoSel = document.getElementById('prodPhoto');
+    if (photoSel) photoSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
   }
 
   document.addEventListener('DOMContentLoaded', () => { render(); wire(); });
