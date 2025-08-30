@@ -248,7 +248,6 @@ const translations = {
 // Gallery config: add your images here
 // Example item: { src: 'assets/img/gallery/bengkel-1.jpg', alt: { id: 'Servis rem', en: 'Brake service' } }
 const GALLERY = [
-  { src: 'assets/img/Cuplikan layar 2025-08-30 091854.png', alt: { id: 'Logo / cuplikan layar', en: 'Logo / screenshot' } },
   { src: 'assets/img/IMG_20250624_115846.jpg', alt: { id: 'Dokumentasi bengkel', en: 'Workshop documentation' } },
   { src: 'assets/img/IMG_20250824_090239.jpg', alt: { id: 'Dokumentasi bengkel', en: 'Workshop documentation' } },
   { src: 'assets/img/IMG_20250824_090334.jpg', alt: { id: 'Dokumentasi bengkel', en: 'Workshop documentation' } },
