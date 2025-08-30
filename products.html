@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TOKO KURDI MOTOR — Produk</title>
+    <link rel="icon" href="assets/img/favicon.png" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="index.html" aria-label="TOKO KURDI MOTOR">
+          <img src="assets/img/logo.png" alt="Logo TOKO KURDI MOTOR" class="logo" />
+          <span class="brand-text" data-i18n="brand.name">Toko Kurdi Motor</span>
+        </a>
+        <nav class="menu" aria-label="Primary Navigation">
+          <button class="hamburger" id="hamburger" aria-label="Toggle Menu" aria-expanded="false">☰</button>
+          <ul id="navLinks">
+            <li><a href="index.html" data-i18n="nav.home">Beranda</a></li>
+            <li><a href="services.html" data-i18n="nav.services">Layanan</a></li>
+            <li><a class="active" href="products.html" data-i18n="nav.products">Produk</a></li>
+            <li><a href="gallery.html" data-i18n="nav.gallery">Galeri</a></li>
+            <li><a href="about.html" data-i18n="nav.about">Tentang</a></li>
+            <li><a href="contact.html" data-i18n="nav.contact">Kontak</a></li>
+          </ul>
+          <div class="nav-cta">
+            <a class="btn btn-primary" id="waTop" href="#" target="_blank" rel="noopener" data-i18n="nav.whatsapp">WhatsApp</a>
+            <button id="langToggle" class="btn btn-ghost" aria-label="Switch Language">ID ▾</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="page-hero">
+        <div class="container">
+          <h1 data-i18n="products.title">Produk & Kategori</h1>
+          <p class="lead" data-i18n="products.subtitle">Onder­dil original dan aftermarket pilihan. Tanya stok via WhatsApp.</p>
+        </div>
+      </section>
+
+      <section class="container">
+        <div class="grid-3 product-grid">
+          <div class="card">
+            <h3 data-i18n="products.items.filters.title">Filter & Pelumas</h3>
+            <p data-i18n="products.items.filters.desc">Oli mesin, ATF, coolant, filter oli/udara/kabin.</p>
+          </div>
+          <div class="card">
+            <h3 data-i18n="products.items.brake.title">Sistem Rem</h3>
+            <p data-i18n="products.items.brake.desc">Kampas rem, cakram, master, minyak rem, flexible hose.</p>
+          </div>
+          <div class="card">
+            <h3 data-i18n="products.items.susp.title">Suspensi & Kaki‑kaki</h3>
+            <p data-i18n="products.items.susp.desc">Shockbreaker, ball joint, tie rod, bushing, arm.</p>
+          </div>
+          <div class="card">
+            <h3 data-i18n="products.items.electrical.title">Kelistrikan</h3>
+            <p data-i18n="products.items.electrical.desc">Aki, alternator, starter, bohlam, sensor, sekering.</p>
+          </div>
+          <div class="card">
+            <h3 data-i18n="products.items.engine.title">Mesin</h3>
+            <p data-i18n="products.items.engine.desc">Belt, gasket, waterpump, timing kit, busi, coil.</p>
+          </div>
+          <div class="card">
+            <h3 data-i18n="products.items.ac.title">AC & Pendingin</h3>
+            <p data-i18n="products.items.ac.desc">Kompresor, kondensor, evaporator, expansion valve.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="container" id="productsSection">
+        <h2 id="prodTitle">Daftar Produk</h2>
+        <div class="product-controls" style="margin:10px 0 14px">
+          <input id="prodSearch" type="search" placeholder="Cari produk atau part number" />
+          <div class="filters" style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap">
+            <select id="prodBrand"><option value="">Semua merek</option></select>
+            <select id="prodBadge">
+              <option value="">Semua tipe</option>
+              <option value="original">Original</option>
+              <option value="aftermarket">Aftermarket</option>
+            </select>
+            <select id="prodVehicle"><option value="">Semua mobil</option></select>
+          </div>
+        </div>
+        <div class="grid-3 product-grid" id="productsGrid"></div>
+        <p id="productsEmpty" class="muted" style="display:none">Tidak ada produk yang cocok.</p>
+        <div id="prodPager" class="pager" style="display:none">
+          <button class="btn" id="prevPage">Sebelumnya</button>
+          <span id="pageInfo" class="muted"></span>
+          <button class="btn" id="nextPage">Berikutnya</button>
+        </div>
+      </section>
+
+      <section class="cta">
+        <div class="container cta-box">
+          <div>
+            <h2 data-i18n="products.cta.title">Cari part tertentu?</h2>
+            <p data-i18n="products.cta.subtitle">Kirim nama/part number via WhatsApp, kami bantu cek.</p>
+          </div>
+          <a class="btn btn-primary btn-lg" id="waCta" href="#" target="_blank" rel="noopener" data-i18n="cta.button">Chat WhatsApp</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-bottom">
+        <p class="muted">© <span id="yearNow"></span> Toko Kurdi Motor.</p>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/products.js"></script>
+  </body>
+  </html>
