@@ -312,7 +312,12 @@ function wireWhatsAppButtons() {
   const waCta = document.getElementById('waCta');
   const defaultMsg = `Halo ${SITE.name}, saya ingin bertanya/booking.`;
   const link = buildWaLink(defaultMsg);
-  [waTop, waHero, waQuick, waCta].forEach(btn => { if (btn) btn.href = link; });
+  [waTop, waHero, waQuick, waCta].forEach(btn => {
+    if (!btn) return;
+    btn.href = link;
+    const id = btn.id || 'wa';
+    btn.addEventListener('click', () => track('click_wa', { label: id, href: link }));
+  });
 }
 
 function applyLogo() {
@@ -360,6 +365,29 @@ function wireMenu() {
     const open = links.classList.toggle('open');
     btn.setAttribute('aria-expanded', String(open));
   });
+}
+
+// GA4 helper: safe event sender
+function track(eventName, params){
+  try { if (window.gtag) { window.gtag('event', eventName, params || {}); } } catch(_) {}
+}
+
+function wireGlobalTracking(){
+  // Track any WhatsApp/tel/map clicks generically
+  document.addEventListener('click', (e) => {
+    const a = e.target && (e.target.closest ? e.target.closest('a') : null);
+    if (!a || !a.href) return;
+    const href = a.getAttribute('href') || '';
+    const id = a.id || '';
+    const txt = (a.textContent || '').trim().slice(0, 60);
+    if (/^https?:\/\/wa\.me\//i.test(href)) {
+      track('click_wa', { label: id || txt || 'whatsapp', href });
+    } else if (/^tel:/i.test(href)) {
+      track('click_phone', { label: id || txt || 'tel', href });
+    } else if (id === 'mapBtn') {
+      track('click_map', { label: 'mapBtn', href });
+    }
+  }, true);
 }
 
 // i18n engine
@@ -414,6 +442,7 @@ function init() {
   wireWhatsAppButtons();
   wireContactForm();
   wireMenu();
+  wireGlobalTracking();
   wireLangToggle();
   applyI18n(getLang());
   renderGallery();
