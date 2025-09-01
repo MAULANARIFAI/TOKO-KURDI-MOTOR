@@ -7,9 +7,35 @@
   const buildWaLink = (text='') => `https://wa.me/${getPhone()}?text=${encodeURIComponent(text)}`;
 
   const copy = (lang) => lang==='en' ? {
-    listTitle:'Product List', search:'Search product or part number', price:'Price', brand:'Brand', sku:'Part Number', compat:'Compatibility', ask:'Ask Stock', badge:{original:'Genuine', aftermarket:'Aftermarket'}, empty:'No matching products.'
+    listTitle:'Product List',
+    search:'Search product or part number',
+    price:'Price', brand:'Brand', sku:'Part Number', compat:'Compatibility', ask:'Ask Stock',
+    badge:{original:'Genuine', aftermarket:'Aftermarket'},
+    empty:'No matching products.',
+    filters:{
+      brandAll:'All brands',
+      typeAll:'All types',
+      vehicleAll:'All vehicles',
+      photoAll:'All photos',
+      photoWith:'With Photo',
+      photoWithout:'Without Photo',
+      sort:'Sort', priceAsc:'Price: Low to High', priceDesc:'Price: High to Low', nameAZ:'Name: A–Z', brandAZ:'Brand: A–Z', photoFirst:'Photo First'
+    }
   } : {
-    listTitle:'Daftar Produk', search:'Cari produk atau part number', price:'Harga', brand:'Merek', sku:'Part Number', compat:'Kompatibilitas', ask:'Tanya Stok', badge:{original:'Original', aftermarket:'Aftermarket'}, empty:'Tidak ada produk yang cocok.'
+    listTitle:'Daftar Produk',
+    search:'Cari produk atau part number',
+    price:'Harga', brand:'Merek', sku:'Part Number', compat:'Kompatibilitas', ask:'Tanya Stok',
+    badge:{original:'Original', aftermarket:'Aftermarket'},
+    empty:'Tidak ada produk yang cocok.',
+    filters:{
+      brandAll:'Semua merek',
+      typeAll:'Semua tipe',
+      vehicleAll:'Semua mobil',
+      photoAll:'Semua foto',
+      photoWith:'Dengan Foto',
+      photoWithout:'Tanpa Foto',
+      sort:'Urutkan', priceAsc:'Harga: Murah ke Mahal', priceDesc:'Harga: Mahal ke Murah', nameAZ:'Nama: A–Z', brandAZ:'Merek: A–Z', photoFirst:'Foto Dulu'
+    }
   };
 
   const VEHICLE_KEYWORDS = [
@@ -150,13 +176,38 @@
   function buildFilters(){
     const brandSel = document.getElementById('prodBrand');
     const vehicleSel = document.getElementById('prodVehicle');
+    const badgeSel = document.getElementById('prodBadge');
+    const photoSel = document.getElementById('prodPhoto');
+    const sortSel = document.getElementById('prodSort');
+    const lang = getLang(); const t = copy(lang);
     if (brandSel) {
       const brands = Array.from(new Set(PRODUCTS.map(p => (p.brand||'').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'id'));
-      brandSel.innerHTML = '<option value="">Semua merek</option>' + brands.map(b=>`<option value="${b}">${b}</option>`).join('');
+      brandSel.innerHTML = `<option value="">${t.filters.brandAll}</option>` + brands.map(b=>`<option value="${b}">${b}</option>`).join('');
     }
     if (vehicleSel) {
       const vehicles = Array.from(new Set(PRODUCTS.flatMap(p => (p.vehicles||[])).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'id'));
-      vehicleSel.innerHTML = '<option value="">Semua mobil</option>' + vehicles.map(v=>`<option value="${v}">${v}</option>`).join('');
+      vehicleSel.innerHTML = `<option value="">${t.filters.vehicleAll}</option>` + vehicles.map(v=>`<option value="${v}">${v}</option>`).join('');
+    }
+    if (badgeSel) {
+      badgeSel.innerHTML = `
+        <option value="">${t.filters.typeAll}</option>
+        <option value="original">${copy(lang).badge.original}</option>
+        <option value="aftermarket">${copy(lang).badge.aftermarket}</option>`;
+    }
+    if (photoSel) {
+      photoSel.innerHTML = `
+        <option value="">${t.filters.photoAll}</option>
+        <option value="with">${t.filters.photoWith}</option>
+        <option value="without">${t.filters.photoWithout}</option>`;
+    }
+    if (sortSel) {
+      sortSel.innerHTML = `
+        <option value="">${t.filters.sort}</option>
+        <option value="price-asc">${t.filters.priceAsc}</option>
+        <option value="price-desc">${t.filters.priceDesc}</option>
+        <option value="name-az">${t.filters.nameAZ}</option>
+        <option value="brand-az">${t.filters.brandAZ}</option>
+        <option value="photo-first">${t.filters.photoFirst}</option>`;
     }
   }
 
@@ -171,7 +222,7 @@
     const q = (search && search.value || '').toLowerCase(); const brandVal = (brandSel && brandSel.value || '').toLowerCase();
     const badgeVal = (badgeSel && badgeSel.value || '').toLowerCase(); const photoSel = document.getElementById('prodPhoto');
     const photoVal = (photoSel && photoSel.value || '').toLowerCase();
-    const items = PRODUCTS.filter(p=>{
+    let items = PRODUCTS.filter(p=>{
       const name = (p.name?.[lang] || p.name?.id || '').toLowerCase();
       const sku = (p.sku||'').toLowerCase(); const brand = (p.brand||'').toLowerCase();
       const matchesQ = !q || name.includes(q) || sku.includes(q) || brand.includes(q);
@@ -180,6 +231,22 @@
       const matchesVehicle = !vehVal || vehs.includes(vehVal); const hasPhoto = !!p.img; const matchesPhoto = !photoVal || (photoVal==='with'? hasPhoto : !hasPhoto);
       return matchesQ && matchesBrand && matchesBadge && matchesVehicle && matchesPhoto;
     });
+    // Sorting
+    const sortSel = document.getElementById('prodSort');
+    const sortVal = (sortSel && sortSel.value) || '';
+    if (sortVal) {
+      const collator = new Intl.Collator(lang==='en'?'en':'id', { sensitivity:'base' });
+      const byName = (a,b) => collator.compare((a.name?.[lang]||a.name?.id||'').trim(), (b.name?.[lang]||b.name?.id||'').trim());
+      const byBrand = (a,b) => collator.compare((a.brand||'').trim(), (b.brand||'').trim());
+      const byPriceAsc = (a,b) => (a.price||Infinity) - (b.price||Infinity);
+      const byPriceDesc = (a,b) => (b.price||-Infinity) - (a.price||-Infinity);
+      const byPhoto = (a,b) => (b.img?1:0) - (a.img?1:0);
+      if (sortVal==='price-asc') items = items.slice().sort(byPriceAsc);
+      else if (sortVal==='price-desc') items = items.slice().sort(byPriceDesc);
+      else if (sortVal==='name-az') items = items.slice().sort(byName);
+      else if (sortVal==='brand-az') items = items.slice().sort(byBrand);
+      else if (sortVal==='photo-first') items = items.slice().sort(byPhoto);
+    }
     const pager = document.getElementById('prodPager'); const pageInfo = document.getElementById('pageInfo');
     if (!render.state) render.state = { page: 1, perPage: 24 };
     const state = render.state; const totalPages = Math.max(1, Math.ceil(items.length / state.perPage)); if (state.page > totalPages) state.page = totalPages;
@@ -201,8 +268,8 @@
     const badgeSel = document.getElementById('prodBadge'); if (badgeSel) badgeSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
     const vehicleSel = document.getElementById('prodVehicle'); if (vehicleSel) vehicleSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
     const photoSel = document.getElementById('prodPhoto'); if (photoSel) photoSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
+    const sortSel = document.getElementById('prodSort'); if (sortSel) sortSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
   }
 
   document.addEventListener('DOMContentLoaded', () => { render(); wire(); });
 })();
-

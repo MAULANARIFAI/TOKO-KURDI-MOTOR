@@ -378,7 +378,7 @@ function applyI18n(lang) {
     if (attr && key && dictVal) el.setAttribute(attr, dictVal);
   });
   const langBtn = document.getElementById('langToggle');
-  if (langBtn) langBtn.textContent = 'ID / EN';
+  if (langBtn) langBtn.textContent = (lang === 'id') ? 'ID' : 'EN';
   document.documentElement.lang = lang;
 }
 

@@ -1,7 +1,9 @@
 // Auto-match product images on the client by name/brand/SKU using a manifest
 (function(){
   const MANIFEST_URL = 'assets/data/product-images.json';
+  const MAP_URL = 'assets/data/image-map.json';
   let IMG_INDEX = [];
+  let IMG_MAP = {};
 
   function alnum(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,''); }
   function tokens(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').split(/\s+/).filter(Boolean); }
@@ -51,6 +53,12 @@
     const src = imgEl.getAttribute('src')||'';
     if(src && !/placehold\.co/.test(src)) return; // already has real image
     const { name, brand, sku } = extractMeta(card);
+    // 1) Explicit map by SKU
+    if(sku && IMG_MAP && typeof IMG_MAP === 'object' && IMG_MAP[sku]){
+      const mapped = IMG_MAP[sku];
+      imgEl.src = mapped.startsWith('assets/') ? mapped : `assets/img/products/${mapped}`;
+      return;
+    }
     if(!name && !brand && !sku) return;
     let best = null; let bestScore = -1; let second = -1;
     for(const ii of IMG_INDEX){
@@ -65,9 +73,13 @@
 
   async function init(){
     try {
-      const res = await fetch(MANIFEST_URL, { cache: 'no-store' });
+      const [res,resMap] = await Promise.all([
+        fetch(MANIFEST_URL, { cache: 'no-store' }),
+        fetch(MAP_URL, { cache: 'no-store' })
+      ]);
       if(!res.ok) return;
       const files = await res.json();
+      if(resMap.ok){ try { IMG_MAP = await resMap.json(); } catch { IMG_MAP = {}; } }
       if(!Array.isArray(files) || !files.length) return;
       IMG_INDEX = buildImageIndex(files);
 
@@ -85,4 +97,3 @@
 
   document.addEventListener('DOMContentLoaded', init);
 })();
-

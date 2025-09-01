@@ -1,9 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TOKO KURDI MOTOR â€” Produk</title>
+    <title>TOKO KURDI MOTOR &mdash; Produk</title>
+    <meta name="description" content="Onderdil original dan aftermarket pilihan. Tanya stok via WhatsApp." />
+    <meta property="og:title" content="TOKO KURDI MOTOR — Produk" />
+    <meta property="og:description" content="Onderdil original dan aftermarket pilihan. Tanya stok via WhatsApp." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://maulanarifai.github.io/TOKO-KURDI-MOTOR/products.html" />
     <link rel="icon" href="assets/img/favicon.png" />
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
@@ -15,7 +20,7 @@
           <span class="brand-text" data-i18n="brand.name">Toko Kurdi Motor</span>
         </a>
         <nav class="menu" aria-label="Primary Navigation">
-          <button class="hamburger" id="hamburger" aria-label="Toggle Menu" aria-expanded="false">â˜°</button>
+          <button class="hamburger" id="hamburger" aria-label="Toggle Menu" aria-expanded="false">&#9776;</button>
           <ul id="navLinks">
             <li><a href="index.html" data-i18n="nav.home">Beranda</a></li>
             <li><a href="services.html" data-i18n="nav.services">Layanan</a></li>
@@ -26,7 +31,7 @@
           </ul>
           <div class="nav-cta">
             <a class="btn btn-primary" id="waTop" href="#" target="_blank" rel="noopener" data-i18n="nav.whatsapp">WhatsApp</a>
-            <button id="langToggle" class="btn btn-ghost" aria-label="Switch Language">ID / EN</button>
+            <button id="langToggle" class="btn btn-ghost" aria-label="Switch Language">ID</button>
           </div>
         </nav>
       </div>
@@ -36,7 +41,7 @@
       <section class="page-hero">
         <div class="container">
           <h1 data-i18n="products.title">Produk & Kategori</h1>
-          <p class="lead" data-i18n="products.subtitle">OnderÂ­dil original dan aftermarket pilihan. Tanya stok via WhatsApp.</p>
+          <p class="lead" data-i18n="products.subtitle">Onderdil original dan aftermarket pilihan. Tanya stok via WhatsApp.</p>
         </div>
       </section>
 
@@ -51,7 +56,7 @@
             <p data-i18n="products.items.brake.desc">Kampas rem, cakram, master, minyak rem, flexible hose.</p>
           </div>
           <div class="card">
-            <h3 data-i18n="products.items.susp.title">Suspensi & Kakiâ€‘kaki</h3>
+            <h3 data-i18n="products.items.susp.title">Suspensi & Kaki-kaki</h3>
             <p data-i18n="products.items.susp.desc">Shockbreaker, ball joint, tie rod, bushing, arm.</p>
           </div>
           <div class="card">
@@ -74,18 +79,11 @@
         <div class="product-controls" style="margin:10px 0 14px">
           <input id="prodSearch" type="search" placeholder="Cari produk atau part number" />
           <div class="filters" style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap">
-            <select id="prodBrand"><option value="">Semua merek</option></select>
-            <select id="prodBadge">
-              <option value="">Semua tipe</option>
-              <option value="original">Original</option>
-              <option value="aftermarket">Aftermarket</option>
-            </select>
-            <select id="prodVehicle"><option value="">Semua mobil</option></select>
-            <select id="prodPhoto">
-              <option value="">Semua foto</option>
-              <option value="with">Dengan Foto</option>
-              <option value="without">Tanpa Foto</option>
-            </select>
+            <select id="prodBrand"></select>
+            <select id="prodBadge"></select>
+            <select id="prodVehicle"></select>
+            <select id="prodPhoto"></select>
+            <select id="prodSort"></select>
           </div>
         </div>
         <div class="grid-3 product-grid" id="productsGrid"></div>
@@ -110,7 +108,7 @@
 
     <footer class="site-footer">
       <div class="container footer-bottom">
-        <p class="muted">Â© <span id="yearNow"></span> Toko Kurdi Motor.</p>
+        <p class="muted">&copy; <span id="yearNow"></span> Toko Kurdi Motor.</p>
       </div>
     </footer>
 
