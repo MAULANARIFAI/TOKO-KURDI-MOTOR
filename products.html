@@ -9,6 +9,8 @@
     <meta property="og:description" content="Onderdil original dan aftermarket pilihan. Tanya stok via WhatsApp." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://maulanarifai.github.io/TOKO-KURDI-MOTOR/products.html" />
+    <meta property="og:image" content="https://maulanarifai.github.io/TOKO-KURDI-MOTOR/assets/img/logo.png" />
+    <link rel="canonical" href="https://maulanarifai.github.io/TOKO-KURDI-MOTOR/products.html" />
     <link rel="icon" href="assets/img/favicon.png" />
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
@@ -77,7 +79,11 @@
       <section class="container" id="productsSection">
         <h2 id="prodTitle">Daftar Produk</h2>
         <div class="product-controls" style="margin:10px 0 14px">
-          <input id="prodSearch" type="search" placeholder="Cari produk atau part number" />
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+            <input id="prodSearch" type="search" placeholder="Cari produk atau part number" />
+            <button id="prodClear" class="btn" type="button">Bersihkan</button>
+            <button id="prodReset" class="btn" type="button">Reset Filter</button>
+          </div>
           <div class="filters" style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap">
             <select id="prodBrand"></select>
             <select id="prodBadge"></select>

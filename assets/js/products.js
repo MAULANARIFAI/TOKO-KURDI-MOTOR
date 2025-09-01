@@ -262,6 +262,15 @@
     const vehicleSel = document.getElementById('prodVehicle'); if (vehicleSel) vehicleSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
     const photoSel = document.getElementById('prodPhoto'); if (photoSel) photoSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
     const sortSel = document.getElementById('prodSort'); if (sortSel) sortSel.addEventListener('change', () => { if (render.state) render.state.page = 1; render(); });
+
+    const clearBtn = document.getElementById('prodClear');
+    if (clearBtn && search) clearBtn.addEventListener('click', () => { search.value = ''; if (render.state) render.state.page = 1; render(); });
+    const resetBtn = document.getElementById('prodReset');
+    if (resetBtn) resetBtn.addEventListener('click', () => {
+      const ids = ['prodBrand','prodBadge','prodVehicle','prodPhoto','prodSort','prodSearch'];
+      ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      if (render.state) render.state.page = 1; render();
+    });
   }
 
   document.addEventListener('DOMContentLoaded', () => { render(); wire(); });
