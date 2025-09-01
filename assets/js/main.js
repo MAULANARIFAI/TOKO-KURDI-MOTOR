@@ -22,7 +22,7 @@ const SITE = {
     cepat: "assets/img/icons/cepat-transparan.png", // Cepat & Transparan
   },
   // Opsional: isi untuk mengaktifkan Google Analytics (GA4) dan Google Search Console
-  gaId: null, // contoh: 'G-XXXXXXXXXX'
+  gaId: 'G-384486YR2N', // GA4 Measurement ID
   googleSiteVerification: null, // contoh: 'verify_token_dari_search_console'
 };
 
