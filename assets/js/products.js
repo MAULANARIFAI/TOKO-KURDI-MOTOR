@@ -164,7 +164,6 @@
       <h4 class="prod-name">${name}</h4>
       <div class="product-meta">${t.brand}: ${p.brand||'-'} | ${t.sku}: ${p.sku||'-'}</div>
       <div class="product-meta">${t.compat}: ${compat||'-'}</div>
-      <div class="price">${t.price}: ${formatPrice(p.price, lang)}</div>
       <div class="product-actions">
         <a class="btn btn-primary" target="_blank" rel="noopener" href="${buildWaLink(`Halo ${ (typeof SITE!=='undefined' && SITE.name) ? SITE.name : 'TOKO KURDI MOTOR' }. Tanya stok: ${name} (${p.brand||''}) SKU: ${p.sku||''}. Mohon info harga & ketersediaan.`)}">${t.ask}</a>
       </div>`;
@@ -203,8 +202,6 @@
     if (sortSel) {
       sortSel.innerHTML = `
         <option value="">${t.filters.sort}</option>
-        <option value="price-asc">${t.filters.priceAsc}</option>
-        <option value="price-desc">${t.filters.priceDesc}</option>
         <option value="name-az">${t.filters.nameAZ}</option>
         <option value="brand-az">${t.filters.brandAZ}</option>
         <option value="photo-first">${t.filters.photoFirst}</option>`;
@@ -238,12 +235,8 @@
       const collator = new Intl.Collator(lang==='en'?'en':'id', { sensitivity:'base' });
       const byName = (a,b) => collator.compare((a.name?.[lang]||a.name?.id||'').trim(), (b.name?.[lang]||b.name?.id||'').trim());
       const byBrand = (a,b) => collator.compare((a.brand||'').trim(), (b.brand||'').trim());
-      const byPriceAsc = (a,b) => (a.price||Infinity) - (b.price||Infinity);
-      const byPriceDesc = (a,b) => (b.price||-Infinity) - (a.price||-Infinity);
       const byPhoto = (a,b) => (b.img?1:0) - (a.img?1:0);
-      if (sortVal==='price-asc') items = items.slice().sort(byPriceAsc);
-      else if (sortVal==='price-desc') items = items.slice().sort(byPriceDesc);
-      else if (sortVal==='name-az') items = items.slice().sort(byName);
+      if (sortVal==='name-az') items = items.slice().sort(byName);
       else if (sortVal==='brand-az') items = items.slice().sort(byBrand);
       else if (sortVal==='photo-first') items = items.slice().sort(byPhoto);
     }
