@@ -49,6 +49,9 @@ let CATALOG = [];
   try { CATALOG = await loadCatalog({}); console.log(`[CATALOG] Loaded ${CATALOG.length} items`); } catch(e){ console.warn('Load catalog failed', e.message); }
 })();
 
+// Simple in-memory session per user (stores last search candidates)
+const SESSIONS = new Map();
+
 // Webhook receiver (POST)
 app.post('/webhook', async (req, res) => {
   if (!verifySignature(req)) {
@@ -85,6 +88,19 @@ async function handleIncomingMessage(msg, metadata) {
   let reply;
   // gunakan AI lokal bila ada, dengan hasil pencarian katalog sebagai konteks
   const results = CATALOG && text ? searchProducts(CATALOG, text, 5) : [];
+
+  // handle numeric selection (1..5) based on last suggestions
+  const isNumberPick = /^\s*[1-5]\s*$/.test(text);
+  if (isNumberPick) {
+    const idx = parseInt(text,10) - 1;
+    const session = SESSIONS.get(from);
+    const chosen = session && session.candidates && session.candidates[idx];
+    if (chosen) {
+      const detail = `${chosen.name}${chosen.brand?` — ${chosen.brand}`:''}${chosen.sku?` — ${chosen.sku}`:''}`;
+      await sendText(from, `Baik, yang Anda pilih:\n${detail}\n\nUntuk cek stok & harga, balas "admin" atau kirim foto/part number tambahan.`);
+      return;
+    }
+  }
   if (hasLocalAI()) {
     reply = await aiComposeReply({ businessName: BUSINESS_NAME, userText: text, candidates: results.slice(0,3) });
   }
@@ -93,6 +109,11 @@ async function handleIncomingMessage(msg, metadata) {
     reply = composeAutoReply(text, results);
   }
   if (reply) await sendText(from, reply);
+
+  // store candidates for quick numeric selection next message
+  if (results && results.length) {
+    SESSIONS.set(from, { candidates: results.slice(0,5), ts: Date.now() });
+  }
 }
 
 function composeAutoReply(input, results=[]) {
@@ -145,6 +166,29 @@ async function sendText(to, body) {
     });
   } catch (e) {
     console.error('send error:', e?.response?.data || e.message);
+  }
+}
+
+async function sendButtons(to, body, buttons){
+  if (!WHATSAPP_TOKEN || !PHONE_NUMBER_ID) return;
+  const url = `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`;
+  const btns = (buttons||[]).slice(0,3).map(b=>({ type:'reply', reply:{ id: b.id, title: b.title } }));
+  const payload = {
+    messaging_product: 'whatsapp',
+    to,
+    type: 'interactive',
+    interactive: {
+      type: 'button',
+      body: { text: body },
+      action: { buttons: btns }
+    }
+  };
+  try {
+    await axios.post(url, payload, {
+      headers: { Authorization: `Bearer ${WHATSAPP_TOKEN}`, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('send buttons error:', e?.response?.data || e.message);
   }
 }
 
