@@ -59,3 +59,20 @@ Anda bisa deploy ke platform Node (Render/Heroku/Fly.io/VPS). Pastikan env diisi
 ## Lisensi
 Gunakan bebas untuk kebutuhan toko Anda.
 
+## (Opsional) Pakai AI Lokal Gratis dengan Ollama
+Agar balasan lebih natural (memahami pertanyaan bebas seperti “bearing ini ada?”) tanpa biaya API berbayar, jalankan model open‑source secara lokal:
+
+1) Install Ollama (Windows/Mac/Linux): https://ollama.ai 
+2) Pull model (contoh Llama 3.1 8B):
+```
+ollama pull llama3.1:8b
+```
+3) Jalankan service (otomatis saat install). Pastikan endpoint aktif di `http://127.0.0.1:11434`.
+4) Isi `.env`:
+```
+OLLAMA_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=llama3.1:8b
+```
+5) Jalankan bot. Bot akan mengirim pertanyaan user + hasil pencarian katalog ke model untuk diringkas jadi jawaban singkat berbahasa Indonesia. Jika `OLLAMA_URL` tidak diisi, bot otomatis fallback ke rule‑based (tanpa AI).
+
+Catatan: semakin besar model → butuh RAM/CPU/GPU lebih besar. Untuk PC standar, 7B/8B masih masuk akal.

@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import axios from 'axios';
+import { loadCatalog, searchProducts, formatCandidates } from './catalog.js';
+import { hasLocalAI, aiComposeReply } from './ai.js';
 
 dotenv.config();
 
@@ -42,6 +44,11 @@ app.get('/webhook', (req, res) => {
   return res.sendStatus(403);
 });
 
+let CATALOG = [];
+(async()=>{
+  try { CATALOG = await loadCatalog({}); console.log(`[CATALOG] Loaded ${CATALOG.length} items`); } catch(e){ console.warn('Load catalog failed', e.message); }
+})();
+
 // Webhook receiver (POST)
 app.post('/webhook', async (req, res) => {
   if (!verifySignature(req)) {
@@ -75,11 +82,20 @@ async function handleIncomingMessage(msg, metadata) {
   else if (type === 'button') text = (msg.button?.text || '').trim();
   else if (type === 'interactive') text = (msg.interactive?.button_reply?.title || msg.interactive?.list_reply?.title || '').trim();
 
-  const reply = composeAutoReply(text);
+  let reply;
+  // gunakan AI lokal bila ada, dengan hasil pencarian katalog sebagai konteks
+  const results = CATALOG && text ? searchProducts(CATALOG, text, 5) : [];
+  if (hasLocalAI()) {
+    reply = await aiComposeReply({ businessName: BUSINESS_NAME, userText: text, candidates: results.slice(0,3) });
+  }
+  // fallback rule-based
+  if (!reply) {
+    reply = composeAutoReply(text, results);
+  }
   if (reply) await sendText(from, reply);
 }
 
-function composeAutoReply(input) {
+function composeAutoReply(input, results=[]) {
   const t = (input || '').toLowerCase();
   if (!t || ['hi','hai','halo','menu','start','mulai','/start'].includes(t)) {
     return (
@@ -92,7 +108,8 @@ function composeAutoReply(input) {
     );
   }
   if (t === '1' || /stok|harga/i.test(input)) {
-    return 'Silakan kirim nama barang/part number & merek. Contoh: "Filter oli 90915-YZZZ2 Toyota".';
+    const list = results && results.length ? `\n\nKandidat:\n${formatCandidates(results)}` : '';
+    return 'Silakan kirim nama barang/part number & merek. Contoh: "Filter oli 90915-YZZZ2 Toyota".' + list;
   }
   if (t === '2' || /booking|servis|service/i.test(input)) {
     return 'Untuk booking servis, kirimkan: nama, nomor polisi, jenis servis/keluhan, dan waktu yang diinginkan.';
@@ -103,8 +120,15 @@ function composeAutoReply(input) {
   if (t === '0' || /admin|cs|operator/i.test(input)) {
     return 'Baik, admin kami akan segera membalas. Mohon tunggu.';
   }
-  // fallback
-  return 'Maaf, kami belum mengerti. Balas dengan kata "menu" untuk melihat pilihan.';
+  // fallback cari di katalog
+  if (results && results.length) {
+    return (
+      'Kami menemukan beberapa kandidat terkait pesan Anda:\n' +
+      formatCandidates(results) +
+      '\n\nSilakan balas angka item, atau kirim foto/part number yang lebih spesifik. Ketik "admin" untuk dihubungkan.'
+    );
+  }
+  return 'Maaf, kami belum mengerti. Balas dengan kata "menu" untuk melihat pilihan, atau kirim nama barang/part number & merek.';
 }
 
 async function sendText(to, body) {
@@ -129,4 +153,3 @@ app.get('/', (req, res) => res.send('WhatsApp Auto-Reply Bot OK'));
 app.listen(PORT, () => {
   console.log(`WA bot on http://localhost:${PORT}`);
 });
-
