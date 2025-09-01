@@ -20,7 +20,10 @@ const SITE = {
     servis: "assets/img/icons/servis.png", // Servis Lengkap
     onderdil: "assets/img/icons/onderdil-terpercaya.png", // Onderdil Terpercaya
     cepat: "assets/img/icons/cepat-transparan.png", // Cepat & Transparan
-  }
+  },
+  // Opsional: isi untuk mengaktifkan Google Analytics (GA4) dan Google Search Console
+  gaId: null, // contoh: 'G-XXXXXXXXXX'
+  googleSiteVerification: null, // contoh: 'verify_token_dari_search_console'
 };
 
 // Translations (no network fetch to avoid local file CORS issues)
@@ -403,6 +406,8 @@ function wireLangToggle() {
 }
 
 function init() {
+  applySiteVerification();
+  applyAnalytics();
   setYear();
   applyContactInfo();
   applyLogo();
@@ -459,4 +464,29 @@ function applyFeatureIcons() {
     // trigger load
     img.src = src;
   });
+}
+
+// Optional: Google Analytics (GA4) injection when SITE.gaId is set
+function applyAnalytics(){
+  if (!SITE.gaId) return;
+  if (window.gtag) return; // avoid duplicate
+  const s1 = document.createElement('script');
+  s1.async = true;
+  s1.src = `https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`;
+  document.head.appendChild(s1);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', SITE.gaId);
+}
+
+// Optional: Google Search Console verification meta
+function applySiteVerification(){
+  if (!SITE.googleSiteVerification) return;
+  if (document.querySelector('meta[name="google-site-verification"]')) return;
+  const m = document.createElement('meta');
+  m.setAttribute('name', 'google-site-verification');
+  m.setAttribute('content', SITE.googleSiteVerification);
+  document.head.appendChild(m);
 }
