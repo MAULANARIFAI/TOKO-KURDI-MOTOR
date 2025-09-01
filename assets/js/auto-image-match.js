@@ -47,6 +47,14 @@
     return { name, brand, sku };
   }
 
+  function setPreferWebp(imgEl, path){
+    const tryWebp = path.replace(/\.[^.]+$/, '.webp');
+    const tmp = new Image();
+    tmp.onload = () => { imgEl.src = tryWebp; };
+    tmp.onerror = () => { imgEl.src = path; };
+    tmp.src = tryWebp;
+  }
+
   function matchAndSet(card){
     const imgEl = card.querySelector('img.thumb');
     if(!imgEl) return;
@@ -56,7 +64,8 @@
     // 1) Explicit map by SKU
     if(sku && IMG_MAP && typeof IMG_MAP === 'object' && IMG_MAP[sku]){
       const mapped = IMG_MAP[sku];
-      imgEl.src = mapped.startsWith('assets/') ? mapped : `assets/img/products/${mapped}`;
+      const final = mapped.startsWith('assets/') ? mapped : `assets/img/products/${mapped}`;
+      setPreferWebp(imgEl, final);
       return;
     }
     if(!name && !brand && !sku) return;
@@ -68,7 +77,7 @@
     }
     if(!best) return;
     const strong = (alnum(sku).length && best.joined.includes(alnum(sku))) || bestScore >= 6 || (bestScore>=4 && bestScore-second>=2);
-    if(strong){ imgEl.src = best.path; }
+    if(strong){ setPreferWebp(imgEl, best.path); }
   }
 
   async function init(){

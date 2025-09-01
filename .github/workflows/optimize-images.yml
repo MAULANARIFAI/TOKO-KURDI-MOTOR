@@ -1,0 +1,59 @@
+name: Optimize Images & Update Manifest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'assets/img/products/**'
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y webp jq
+
+      - name: Convert JPG/PNG to WebP
+        run: |
+          shopt -s nullglob
+          set -e
+          changed=0
+          for f in assets/img/products/*.{jpg,JPG,jpeg,JPEG,png,PNG}; do
+            base="${f%.*}"
+            out="$base.webp"
+            if [ ! -f "$out" ]; then
+              cwebp -q 82 "$f" -o "$out"
+              echo "Converted: $f -> $out"
+              changed=1
+            fi
+          done
+          echo "changed=$changed" >> $GITHUB_ENV
+
+      - name: Update image manifest
+        run: |
+          ls -1 assets/img/products | jq -R -s -c 'split("\n") | map(select(length>0))' > assets/data/product-images.json
+          if ! git diff --quiet; then
+            git add assets/data/product-images.json
+          fi
+
+      - name: Commit and push if changes
+        run: |
+          if ! git diff --cached --quiet || [ "$changed" = "1" ]; then
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git add -A
+            git commit -m "chore(ci): optimize images to webp and refresh manifest"
+            git push
+          else
+            echo "No image changes"
+          fi
+
