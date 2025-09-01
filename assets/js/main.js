@@ -18,7 +18,7 @@ const SITE = {
   // Opsi ikon fitur (jika file ada, akan dipakai menggantikan SVG default)
   featureIcons: {
     servis: "assets/img/icons/servis.png", // Servis Lengkap
-    onderdil: "assets/img/icons/onderdil-terpercaya.png", // Onder1dil Terpercaya
+    onderdil: "assets/img/icons/onderdil-terpercaya.png", // Onderdil Terpercaya
     cepat: "assets/img/icons/cepat-transparan.png", // Cepat & Transparan
   }
 };
@@ -51,7 +51,7 @@ const translations = {
     "features.title": "Mengapa TOKO KURDI MOTOR?",
     "features.items.services.title": "Servis Lengkap",
     "features.items.services.desc": "Tune-up, ganti oli, rem, AC, balancing, spooring, dan lainnya.",
-    "features.items.parts.title": "Onder­dil Terpercaya",
+    "features.items.parts.title": "Onderdil Terpercaya",
     "features.items.parts.desc": "Original dan aftermarket pilihan dengan garansi toko.",
     "features.items.fast.title": "Cepat & Transparan",
     "features.items.fast.desc": "Estimasi jelas, proses rapi, komunikasi mudah.",
@@ -76,7 +76,7 @@ const translations = {
 
     "services.title": "Layanan Bengkel",
     "services.subtitle": "Servis lengkap dengan mekanik berpengalaman dan garansi pekerjaan.",
-    "services.items.tuneup.title": "Tune‑up & General Check",
+    "services.items.tuneup.title": "Tune-up & General Check",
     "services.items.tuneup.desc": "Inspeksi menyeluruh, cek sistem, dan penyetelan untuk performa optimal.",
     "services.items.oil.title": "Ganti Oli & Filter",
     "services.items.oil.desc": "Oli berkualitas, filter orisinil/aftermarket, sesuai rekomendasi pabrik.",
@@ -84,7 +84,7 @@ const translations = {
     "services.items.brake.desc": "Kampas, cakram, minyak rem, bleeding, dan pengecekan menyeluruh.",
     "services.items.ac.title": "AC Mobil",
     "services.items.ac.desc": "Cek kebocoran, tambah freon, kompresor, cleaning evaporator & blower.",
-    "services.items.susp.title": "Suspensi & Kaki‑kaki",
+    "services.items.susp.title": "Suspensi & Kaki-kaki",
     "services.items.susp.desc": "Shockbreaker, bushing, tie rod, ball joint, spooring & balancing.",
     "services.items.electrical.title": "Kelistrikan & Diagnostik",
     "services.items.electrical.desc": "Scan OBD, aki, alternator, starter, dan problem kelistrikan lain.",
@@ -92,12 +92,12 @@ const translations = {
     "services.cta.subtitle": "Hubungi kami via WhatsApp untuk jadwal dan estimasi.",
 
     "products.title": "Produk & Kategori",
-    "products.subtitle": "Onder­dil original dan aftermarket pilihan. Tanya stok via WhatsApp.",
+    "products.subtitle": "Onderdil original dan aftermarket pilihan. Tanya stok via WhatsApp.",
     "products.items.filters.title": "Filter & Pelumas",
     "products.items.filters.desc": "Oli mesin, ATF, coolant, filter oli/udara/kabin.",
     "products.items.brake.title": "Sistem Rem",
     "products.items.brake.desc": "Kampas rem, cakram, master, minyak rem, flexible hose.",
-    "products.items.susp.title": "Suspensi & Kaki‑kaki",
+    "products.items.susp.title": "Suspensi & Kaki-kaki",
     "products.items.susp.desc": "Shockbreaker, ball joint, tie rod, bushing, arm.",
     "products.items.electrical.title": "Kelistrikan",
     "products.items.electrical.desc": "Aki, alternator, starter, bohlam, sensor, sekering.",
@@ -185,7 +185,7 @@ const translations = {
 
     "services.title": "Workshop Services",
     "services.subtitle": "Complete services by experienced mechanics with workmanship warranty.",
-    "services.items.tuneup.title": "Tune‑up & General Check",
+    "services.items.tuneup.title": "Tune-up & General Check",
     "services.items.tuneup.desc": "Full inspection, system checks, and adjustments for optimal performance.",
     "services.items.oil.title": "Oil & Filter Change",
     "services.items.oil.desc": "Quality oils, genuine/aftermarket filters per manufacturer specs.",
@@ -378,7 +378,7 @@ function applyI18n(lang) {
     if (attr && key && dictVal) el.setAttribute(attr, dictVal);
   });
   const langBtn = document.getElementById('langToggle');
-  if (langBtn) langBtn.textContent = (lang === 'id') ? 'ID ▾' : 'EN ▾';
+  if (langBtn) langBtn.textContent = 'ID / EN';
   document.documentElement.lang = lang;
 }
 

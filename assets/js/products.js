@@ -1,4 +1,4 @@
-// Lightweight product renderer (recreated with image path normalization and part.csv fallback)
+// Clean UTF-8 product renderer with ASCII-safe separators and CSV fallback
 (function(){
   const FALLBACK_PHONE = '6287817133172';
 
@@ -136,7 +136,7 @@
       <img class="thumb" src="${imgSrc}" alt="${name}" loading="lazy" />
       <div class="badges"><span class="badge">${badge}</span></div>
       <h4 class="prod-name">${name}</h4>
-      <div class="product-meta">${t.brand}: ${p.brand||'-'} • ${t.sku}: ${p.sku||'-'}</div>
+      <div class="product-meta">${t.brand}: ${p.brand||'-'} | ${t.sku}: ${p.sku||'-'}</div>
       <div class="product-meta">${t.compat}: ${compat||'-'}</div>
       <div class="price">${t.price}: ${formatPrice(p.price, lang)}</div>
       <div class="product-actions">
@@ -187,7 +187,7 @@
     grid.innerHTML = ''; pageItems.forEach(p => grid.appendChild(buildCard(p, lang, t)));
     if (pager) {
       pager.style.display = items.length > state.perPage ? 'flex' : 'none';
-      if (pageInfo) pageInfo.textContent = `Halaman ${state.page} / ${totalPages} • ${items.length} produk`;
+      if (pageInfo) pageInfo.textContent = `Halaman ${state.page} / ${totalPages} | ${items.length} produk`;
       const prev = document.getElementById('prevPage'); const next = document.getElementById('nextPage');
       if (prev) prev.onclick = () => { if (state.page > 1) { state.page--; render(); } };
       if (next) next.onclick = () => { if (state.page < totalPages) { state.page++; render(); } };
@@ -205,3 +205,4 @@
 
   document.addEventListener('DOMContentLoaded', () => { render(); wire(); });
 })();
+
